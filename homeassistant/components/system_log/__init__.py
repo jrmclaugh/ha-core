@@ -22,10 +22,12 @@ CONF_FIRE_EVENT = "fire_event"
 CONF_MESSAGE = "message"
 CONF_LEVEL = "level"
 CONF_LOGGER = "logger"
+CONF_PARSE_LEVEL = "parse_level"
 
 DATA_SYSTEM_LOG = "system_log"
 DEFAULT_MAX_ENTRIES = 50
 DEFAULT_FIRE_EVENT = False
+DEFAULT_PARSE_LEVEL = logging.WARN
 DOMAIN = "system_log"
 
 EVENT_SYSTEM_LOG = "system_log_event"
@@ -41,6 +43,9 @@ CONFIG_SCHEMA = vol.Schema(
                     CONF_MAX_ENTRIES, default=DEFAULT_MAX_ENTRIES
                 ): cv.positive_int,
                 vol.Optional(CONF_FIRE_EVENT, default=DEFAULT_FIRE_EVENT): cv.boolean,
+                vol.Optional(
+                    CONF_PARSE_LEVEL, default=DEFAULT_PARSE_LEVEL
+                ): cv.positive_int,
             }
         )
     },
@@ -271,7 +276,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     handler = LogErrorHandler(
         hass, conf[CONF_MAX_ENTRIES], conf[CONF_FIRE_EVENT], paths_re
     )
-    handler.setLevel(logging.WARN)
+    handler.setLevel(conf[CONF_PARSE_LEVEL])
 
     hass.data[DOMAIN] = handler
 
